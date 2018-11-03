@@ -26,10 +26,10 @@ request.onload = function () {
       h1.textContent = movie.Name;
 
        const date = document.createElement('p');
-       date.textContent = `Relase date: ${movie.RelaseDate}`;
+       date.textContent = `Release date: ${movie.ReleaseDate}`;
        
        const actors = document.createElement('p');
-       actors.textContent = `Actos: ${movie.Principal}`;
+       actors.textContent = `Actos: ${movie.Actors}`;
 
       container.appendChild(card);
       card.appendChild(h1);
