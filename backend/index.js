@@ -41,10 +41,9 @@ function putRecord(item) {
 }
 function getRecord(queryParams) {
     var dynamoParams = {
-            TableName: process.env.DYNAMO_TABLE,
-            Key: queryParams
+            TableName: process.env.DYNAMO_TABLE
         };
-    dynamo.get(dynamoParams, function(err, data) {
+    dynamo.scan(dynamoParams, function(err, data) {
         if (err) {
             done(new Error(err));
         } else {
