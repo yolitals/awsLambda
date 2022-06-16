@@ -1,69 +1,56 @@
 const AWS = require('aws-sdk');
-const dynamo = new  AWS.DynamoDB.DocumentClient();
 
-exports.handler = (event, context, callback) => {
-    
-    //Response json
-    const done = (err, res) => callback(null, {
-        statusCode: err ? '400' : '200',
-        body: err ? err.message : JSON.stringify(res),
-        headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-        },
-    });
+const dynamo = new AWS.DynamoDB.DocumentClient();
 
-    switch (event.httpMethod) {
-        case 'GET':
-            getRecord(event.queryStringParameters)
-            break;
-        case 'PUT':
-            putRecord(event.body)
-            break;
-        case 'DELETE':
-            deleteRecord(event.queryStringParameters)
-            break;
-        default:
-            done(new Error(`Unsupported method "${event.httpMethod}"`));
+/**
+ * Demonstrates a simple HTTP endpoint using API Gateway. You have full
+ * access to the request and response payload, including headers and
+ * status code.
+ *
+ * To scan a DynamoDB table, make a GET request with the TableName as a
+ * query string parameter. To put, update, or delete an item, make a POST,
+ * PUT, or DELETE request respectively, passing in the payload to the
+ * DynamoDB API as a JSON body.
+ */
+exports.handler = async (event, context) => {
+    //console.log('Received event:', JSON.stringify(event, null, 2));
+
+    let body;
+    let statusCode = '200';
+    const headers = {
+        'Content-Type': 'application/json',
+        "Access-Control-Allow-Headers" : "Content-Type",
+        "Access-Control-Allow-Origin": "http://movies-app-yl.s3-website-us-east-1.amazonaws.com",
+        "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+    };
+
+    try {
+        switch (event.httpMethod) {
+            case 'DELETE':
+                body = await dynamo.delete(JSON.parse(event.body)).promise();
+                break;
+            case 'GET':
+                body = await dynamo.scan({ TableName: process.env.TABLE_NAME }).promise();
+                break;
+            case 'POST':
+                body = await dynamo.put(JSON.parse(event.body)).promise();
+                break;
+            case 'PUT':
+                body = await dynamo.update(JSON.parse(event.body)).promise();
+                break;
+            default:
+                throw new Error(`Unsupported method "${event.httpMethod}"`);
+        }
+    } catch (err) {
+        statusCode = '400';
+        body = err.message;
+    } finally {
+        body = JSON.stringify(body);
     }
-function putRecord(item) {
-    console.log(item);
-    var dynamoParams = {
-            TableName: process.env.DYNAMO_TABLE,
-            Item: JSON.parse(item)
-        };
-    dynamo.put(dynamoParams, function(err, data) {
-        if (err) {
-            done(new Error(err));
-        } else {
-            done();
-        }
-    });
-}
-function getRecord(queryParams) {
-    var dynamoParams = {
-            TableName: process.env.DYNAMO_TABLE
-        };
-    dynamo.scan(dynamoParams, function(err, data) {
-        if (err) {
-            done(new Error(err));
-        } else {
-            done(err,data);
-        }
-    });
-}
-function deleteRecord(queryParams) {
-    var dynamoParams = {
-            TableName: process.env.DYNAMO_TABLE,
-            Key: queryParams
-        };
-    dynamo.delete(dynamoParams, function(err, data) {
-        if (err) {
-            done(new Error(err));
-        } else {
-            console.log(data)
-            done(err,data);
-        }
-    });
-}
+
+    return {
+        statusCode,
+        body,
+        headers,
+    };
 };
