@@ -12,7 +12,7 @@ app.appendChild(logob);
 app.appendChild(container);
 
 var request = new XMLHttpRequest();
-request.open('GET', 'https://d792v3d3b1.execute-api.us-east-2.amazonaws.com/v1/Movies', true);
+request.open('GET', 'https://tjswqadm08.execute-api.us-east-1.amazonaws.com/dev/movies', true);
 request.onload = function () {
 
   // Begin accessing JSON data here
@@ -29,7 +29,7 @@ request.onload = function () {
        date.textContent = `Release date: ${movie.ReleaseDate}`;
        
        const actors = document.createElement('p');
-       actors.textContent = `Actos: ${movie.Actors}`;
+       actors.textContent = `Actors: ${movie.Actors}`;
 
       container.appendChild(card);
       card.appendChild(h1);

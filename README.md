@@ -13,8 +13,12 @@ Lambda es un servicio de AWS completamente serverless, en este repositorio encon
 - Crear un role para AWS Lambda, en este caso utilizaremos el servicio de Dynamo para almacenar información por lo que agregaremos una politica para que este servicio puede ser accesido desde nuestra función lambda.
     - Ingresar a la consola de AWS, buscar el servicio IAM.
     - Ingresar a la sección de roles y seleccionar: crear nuevo role
-    - Seleccionar el servicio de AWS lambda para el role.
-    - Presionar siguiente, y colocar un nombre al Role. 
+    - Marcar la opcion **AWS service**
+    - En la lista de **Use case** seleccionar el servicio Lambda 
+    - Presionar: siguiente
+    - En la sección **Permissions policies** buscar: `AmazonDynamoDBFullAccess` y seleccionar la policy con ese nombre
+    - Presionar: siguiente
+    - Colocar nombre al role y presionar: **Create role**
 - Luego se debera crear una tabla dentro del servicion de Dynamo, cuando se crea la tabla es requerido un valor o nombre para la clave principal, esta clave nos servira como llave primaria, para realizar busquedas.
     - Ingresar a la consola de AWS
     - Buscar el servicio de Dynamo
