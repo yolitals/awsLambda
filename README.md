@@ -43,7 +43,7 @@ Lambda es un servicio de AWS completamente serverless, en este repositorio encon
 Crear un bucket en s3 publico, es decir sin restricciones de acceso.
 Una vez creado, en la pestaña de `Propiedades` en la ultima sección habilitar la propiedad de `web hosting`.
 Por ultimo en la pestaña de `permisos` agregar la siguiente politica:
-sh ```
+```sh
 {
     "Version": "2012-10-17",
     "Statement": [
