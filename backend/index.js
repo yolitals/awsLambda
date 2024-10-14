@@ -1,42 +1,33 @@
-const AWS = require('aws-sdk');
+import { DynamoDB } from '@aws-sdk/client-dynamodb';
+import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
 
-const dynamo = new AWS.DynamoDB.DocumentClient();
+const dynamo = DynamoDBDocument.from(new DynamoDB());
 
-/**
- * Demonstrates a simple HTTP endpoint using API Gateway. You have full
- * access to the request and response payload, including headers and
- * status code.
- *
- * To scan a DynamoDB table, make a GET request with the TableName as a
- * query string parameter. To put, update, or delete an item, make a POST,
- * PUT, or DELETE request respectively, passing in the payload to the
- * DynamoDB API as a JSON body.
- */
-exports.handler = async (event, context) => {
+export const handler = async (event) => {
     //console.log('Received event:', JSON.stringify(event, null, 2));
 
     let body;
     let statusCode = '200';
+  
     const headers = {
         'Content-Type': 'application/json',
         "Access-Control-Allow-Headers" : "Content-Type",
-        "Access-Control-Allow-Origin": "http://movies-app-yl.s3-website-us-east-1.amazonaws.com",
+        "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
     };
-
     try {
         switch (event.httpMethod) {
             case 'DELETE':
-                body = await dynamo.delete(JSON.parse(event.body)).promise();
+                body = await dynamo.delete(JSON.parse(event.body));
                 break;
             case 'GET':
-                body = await dynamo.scan({ TableName: process.env.TABLE_NAME }).promise();
+                body = await dynamo.scan({ TableName: process.env.TABLE_NAME });
                 break;
             case 'POST':
-                body = await dynamo.put(JSON.parse(event.body)).promise();
+                body = await dynamo.put(JSON.parse(event.body));
                 break;
             case 'PUT':
-                body = await dynamo.update(JSON.parse(event.body)).promise();
+                body = await dynamo.update(JSON.parse(event.body));
                 break;
             default:
                 throw new Error(`Unsupported method "${event.httpMethod}"`);
